@@ -3,7 +3,7 @@
   "minVersion": "0.8",
   "package": "cn.blockforge.generated.shoulderaimsync.mixin",
   "compatibilityLevel": "JAVA_17",
-  "refmap": "z80z_z80z_shoulder_aim_sync.refmap.json",
+  "refmap": "z80z_shoulder_aim_sync.refmap.json",
   "mixins": [],
   "client": [
     "LivingEntityRendererMixin",
