@@ -1,4 +1,4 @@
-package io.github.z80z99.shoulderaimsync.client;
+package cn.blockforge.generated.shoulderaimsync.client;
 
 import net.minecraft.client.Camera;
 import net.minecraft.core.BlockPos;
@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
  */
 final class CameraBridge {
 
-    private static final Logger LOGGER = LogManager.getLogger("shoulder_aim_sync");
+    private static final Logger LOGGER = LogManager.getLogger("z80z_shoulder_aim_sync");
 
     private static MethodHandle SET_POSITION;
     private static Field POSITION_FIELD;
@@ -40,7 +40,7 @@ final class CameraBridge {
                 }
             }
         } catch (Throwable t) {
-            LOGGER.debug("[shoulder_aim_sync] Camera.setPosition 方法桥解析失败", t);
+            LOGGER.debug("[z80z_shoulder_aim_sync] Camera.setPosition 方法桥解析失败", t);
             SET_POSITION = null;
         }
         if (SET_POSITION == null) {
@@ -56,16 +56,16 @@ final class CameraBridge {
                     }
                 }
             } catch (Throwable t) {
-                LOGGER.debug("[shoulder_aim_sync] Camera 字段桥解析失败", t);
+                LOGGER.debug("[z80z_shoulder_aim_sync] Camera 字段桥解析失败", t);
                 POSITION_FIELD = null;
                 BLOCK_POS_FIELD = null;
             }
         }
         if (SET_POSITION == null && POSITION_FIELD == null) {
-            LOGGER.warn("[shoulder_aim_sync] 无法定位 Camera 位置写入点，越肩相机将不生效"
+            LOGGER.warn("[z80z_shoulder_aim_sync] 无法定位 Camera 位置写入点，越肩相机将不生效"
                     + "（该问题通常意味着 Minecraft/Forge 版本不匹配）");
         } else {
-            LOGGER.debug("[shoulder_aim_sync] Camera 位置桥就绪：{}",
+            LOGGER.debug("[z80z_shoulder_aim_sync] Camera 位置桥就绪：{}",
                     SET_POSITION != null ? "setPosition 方法" : "position 字段");
         }
     }

@@ -1,168 +1,118 @@
-# Shoulder Aim Sync
+# Z80Z 越肩视角与枪械瞄准 (Shoulder Aim Sync)
 
-A client-side **over-the-shoulder camera** mod for **Minecraft 1.20.1 (Forge)**, with
-soft compatibility for **TACZ (Timeless & Classics Guns: Zero)**.
+Minecraft 1.20.1 Forge **客户端**模组：把原版第三人称改成可左右换肩的越肩相机，并对 TACZ 枪械做瞄准、变焦与狙击开镜的软兼容。
 
-[中文说明](#中文说明) · [License: MIT](LICENSE)
+Minecraft 1.20.1 · Forge 47.4.0 · Java 17 · 仅客户端
 
-> Client-side only — install it on the client; it does not need to be on the server.
+## 功能
 
----
+- **接管 F5**：`第一人称 → 越肩 → 第三人称后 → 第三人称前`。
+- **X 键换肩**：0.15 秒平滑横移，保留惯性；默认不用 R，避免与 TACZ 换弹冲突。
+- **三种跟随模式**：平滑插值（SMOOTH）、弹簧阻尼（SPRING）、固定跟随（FIXED，无延迟）。
+- **瞄准变焦 + 机身前探**：手持枪械瞄准时 FOV 渐进收窄、相机前移贴肩。
+- **狙击强制第一人称**：按 TACZ 枪包类型识别，开镜切第一人称，松手恢复，带镜片黑框过渡。
+- **越肩准星**：TACZ 只在第一人称绘制准星，本模组在越肩持枪时补一个，并按真实弹道命中点投影对齐。
+- **贴墙虚化**：镜头被墙挤近时，身体、盔甲、鞘翅一起变半透明，不再穿模。
+- **自动越肩**：上坐骑、鞘翅滑翔时自动切换，结束自动恢复。
+- **鞘翅滚转**：滑翔转弯时画面随倾斜滚转。
+- **K 键设置界面**：参数全部可调，宽屏三栏、窄屏单栏分页。
 
-## Features
+## 默认键位
 
-- **F5 takeover** — cycles `first person → over-the-shoulder → third person (back) → third person (front)`
-- **Swap shoulders** — `X` by default, 0.15 s smooth slide with inertia, fully rebindable
-  - Not `R`, to avoid clashing with TACZ's default reload key
-- **Three camera follow modes** — `SMOOTH` (exponential), `SPRING` (damped, weighty), `FIXED` (no latency)
-- **Aim zoom + body push** — FOV narrows and the camera moves toward the shoulder while aiming
-- **Sniper force-first-person** — detected by TACZ gun type or keyword lists; scopes in to first person and snaps back on release, with an optional scope-fade
-- **Shoulder crosshair** — TACZ only draws its crosshair in first person, so this mod draws one at the **projected bullet-impact point** (not the screen center)
-- **Wall fade** — the player model fades out (body, armor, elytra) as the camera is pushed against a wall, instead of clipping through it
-- **Auto shoulder** — when mounting a rideable, and when starting to glide with an elytra
-- **Elytra screen roll** — the view banks while turning during gliding
-- **Settings screen** — `K`; three columns on wide screens, paged single-column on narrow ones
-
-## Default keys
-
-| Action | Default |
+| 功能 | 默认键 |
 | --- | --- |
-| Cycle perspective | `F5` (taken over from vanilla) |
-| Swap shoulders | `X` |
-| Open/close settings | `K` |
+| 切换视角 | `F5`（接管原版键） |
+| 换肩 | `X` |
+| 打开/关闭设置 | `K` |
 
-## Configuration
+## 怎么玩
 
-Client config: `config/shoulder_aim_sync-client.toml` (or edit in-game via `K`).
+1. 把 jar 放进客户端 `mods` 文件夹（**不需要装服务端**）。
+2. 进世界后默认自动进入越肩视角；按 `F5` 在四种视角间循环。
+3. 按 `X` 左右换肩；按 `K` 打开设置，可调肩部偏移、跟随模式、变焦强度等。
+4. 手持枪械按住右键瞄准：越肩下会看到 FOV 收窄、机身前探。
+5. 狙击枪开镜会自动切第一人称，松手立刻回到越肩。
+6. 上坐骑或开始滑翔时自动切越肩，下来/落地自动恢复。
 
-| Key | Default | Description |
+## 配置
+
+客户端配置：`config/z80z_shoulder_aim_sync-client.toml`，或游戏内按 `K` 修改。
+
+| 键 | 默认 | 说明 |
 | --- | --- | --- |
-| `general.enabled` | true | Master switch; off restores vanilla behavior |
-| `general.takeoverF5` | true | Take over vanilla F5 cycling |
-| `general.autoShoulder` | true | Enter shoulder view on world join (needs `takeoverF5`) |
-| `general.autoShoulderRiding` | true | Auto shoulder when mounting (horses must be saddled) |
-| `camera.rightSide` | true | Default to right shoulder |
+| `general.enabled` | true | 总开关，关闭后完全交还原版 |
+| `general.takeoverF5` | true | 接管原版 F5 |
+| `general.autoShoulder` | true | 进世界自动越肩（需开启接管 F5） |
+| `general.autoShoulderRiding` | true | 上坐骑自动越肩（马需已上鞍） |
 | `camera.followMode` | SMOOTH | `SMOOTH` / `SPRING` / `FIXED` |
-| `camera.transitionTime` | 0.25 | Follow transition (seconds) |
-| `camera.springStiffness` / `springDamping` | 110 / 17 | Spring params (`SPRING` only) |
-| `camera.shoulderOffsetX` / `shoulderOffsetY` | 0.55 / 0.08 | Shoulder offset (blocks) |
-| `camera.backDistance` | 1.15 | Camera distance behind the player |
-| `camera.shoulderSlideTime` | 0.15 | Shoulder-swap slide time |
-| `camera.avoidWall` | true | Shrink camera when close to walls |
-| `camera.fadePlayerWhenClose` | true | Fade the player model when the camera is pushed close |
-| `aim.aimZoom` | true | Progressive aim zoom |
-| `aim.zoomFactor` | 0.7 | Resulting FOV ratio (0.7 = 70 %) |
-| `aim.aimPush` / `pushDistance` | true / 0.4 | Body push while aiming |
-| `aim.aimTransitionTime` | 0.3 | Zoom / push time |
-| `aim.zoomInFirstPerson` | false | Also zoom in first person (stacks with TACZ scope magnification) |
-| `aim.aimHoldTicks` | 2 | Hold ticks before aim registers |
-| `aim.deferToTaczScope` | true | Let TACZ handle zoom when a scope is attached |
-| `aim.followTaczAimProgress` | false | Follow TACZ's aiming animation instead of `aimTransitionTime` |
-| `aim.showShoulderCrosshair` | true | Draw the shoulder crosshair |
-| `aim.debugCrosshair` | false | Debug overlay: screen-center cross + projection values |
-| `sniper.forceFirstPersonSniper` | true | Force first person when scoped with a sniper |
-| `sniper.scopeFade` / `scopeFadeTime` | true / 0.2 | Scope fade transition |
-| `elytra.autoShoulderElytra` | true | Auto shoulder while gliding |
-| `elytra.elytraStartDelayTicks` | 10 | Glide ticks before auto-switch |
-| `elytra.elytraRollScreen` / `elytraRollStrength` | true / 20 | Glide banking roll |
-| `compat.gunModIds` | `["tacz"]` | Namespaces treated as guns |
-| `compat.sniperKeywords` | TACZ sniper IDs | Keyword matching for other gun mods |
-| `compat.sniperGunIds` | `[]` | Exact sniper gun IDs |
-| `compat.ridingEntityBlocklist` | `[]` | Entity IDs excluded from auto-shoulder-on-mount |
+| `camera.transitionTime` | 0.25 | 跟随过渡时间（秒） |
+| `camera.springStiffness` / `springDamping` | 110 / 17 | 弹簧参数（仅 SPRING） |
+| `camera.shoulderOffsetX` / `shoulderOffsetY` | 0.55 / 0.08 | 肩部左右/高度偏移（格） |
+| `camera.backDistance` | 1.15 | 相机后退距离（格） |
+| `camera.shoulderSlideTime` | 0.15 | 换肩横移时间（秒） |
+| `camera.avoidWall` | true | 贴墙自动收缩 |
+| `camera.fadePlayerWhenClose` | true | 镜头贴近时虚化人物 |
+| `aim.aimZoom` | true | 瞄准渐进变焦 |
+| `aim.zoomFactor` | 0.7 | 变焦后 FOV 占原比例（界面以“拉近强度”呈现） |
+| `aim.aimPush` / `pushDistance` | true / 0.4 | 机身前探 |
+| `aim.aimTransitionTime` | 0.3 | 变焦/前探时间（秒） |
+| `aim.zoomInFirstPerson` | false | 第一人称也变焦（会与 TACZ 倍镜叠乘） |
+| `aim.aimHoldTicks` | 2 | 长按右键多少 tick 后算瞄准 |
+| `aim.deferToTaczScope` | true | 装倍镜时把变焦交给 TACZ |
+| `aim.followTaczAimProgress` | false | 跟随 TACZ 开镜动画而非自身计时 |
+| `aim.showShoulderCrosshair` | true | 越肩准星 |
+| `aim.debugCrosshair` | false | 准星调试显示 |
+| `sniper.forceFirstPersonSniper` | true | 狙击开镜强制第一人称 |
+| `sniper.scopeFade` / `scopeFadeTime` | true / 0.2 | 镜片黑框过渡 |
+| `elytra.autoShoulderElytra` | true | 滑翔自动越肩 |
+| `elytra.elytraStartDelayTicks` | 10 | 滑翔多少 tick 后触发 |
+| `elytra.elytraRollScreen` / `elytraRollStrength` | true / 20 | 滑翔转弯滚转 |
+| `compat.gunModIds` | `["tacz"]` | 哪些命名空间算枪械 |
+| `compat.sniperKeywords` | TACZ 狙击 ID | 其他枪械模组的狙击关键词 |
+| `compat.sniperGunIds` | `[]` | 精确指定狙击枪 ID |
+| `compat.ridingEntityBlocklist` | `[]` | 骑乘自动越肩的实体黑名单 |
 
-## Compatibility
+## 兼容性
 
-### TACZ — Timeless & Classics Guns: Zero
+- **TACZ（永恒枪械工坊：零）**：通过 `IGun` 接口和物品 NBT 的 `GunId` 识别枪械，弹药/配件/工作台不会被误判；瞄准状态读取 TACZ 的 `isAim()` 与开镜进度，改键或切换式瞄准也能同步；狙击识别优先用枪包自带的 `type` 字段，自定义枪包同样有效。
+- **TACZ-addon**：其 `enableBetterAimCamera` 默认开启，会在瞄准时自动切第一人称，此时本模组的越肩变焦面板基本不生效；想用越肩变焦请关闭该项。
+- **ShoulderSurfing**：两者都接管相机，不建议同时安装。
 
-- Guns are detected through the `IGun` interface plus the item's `GunId` NBT tag, so ammo,
-  attachments and the gun smith table are never mistaken for guns.
-- Aim state is read from TACZ's `IClientPlayerGunOperator` (`isAim()` / `getClientAimingProgress()`),
-  so rebinding or toggle-to-aim keeps everything in sync.
-- Sniper detection prefers the gun pack's own `type` field (`"sniper"`), which also covers custom
-  gun packs. Defaults: `ai_awp`, `kar98`, `m107`, `m700`, `m95`, `springfield1873`.
+## 已知限制
 
-### TACZ-addon
+- 越肩相机横向偏移，而 TACZ 弹道从眼睛发出，因此准星画在弹道命中点的投影位置、不在屏幕中心——这是几何正确行为。
+- 腰射散布（TACZ 的 `inaccuracy`）会让弹着点围绕准星随机分布，属枪械属性。
+- 开火后坐力会短暂踢动视角，此时画面朝向与弹道方向不完全一致。
 
-- Its `enableBetterAimCamera` (default **on**) switches to first person ~110 ms after you start
-  aiming. While that is enabled, this mod's aim-zoom/push panel has little effect because the
-  camera is already in first person. Disable that option if you want shoulder-view zoom.
-- Do **not** enable `zoomInFirstPerson` together with TACZ scopes — the two magnifications stack.
+## 安装
 
-### ShoulderSurfing
+1. 安装 [Minecraft Forge 1.20.1-47.4.0](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.20.1.html)。
+2. 从 [Releases](https://github.com/Z80Z99/z80z-shoulder-aim-sync/releases) 下载最新的 `z80z-shoulder-aim-sync-<版本>.jar`。
+3. 放入客户端 `mods` 文件夹，启动游戏。
 
-No dedicated integration; both mods take over the camera, so running them together is not recommended.
+模组是纯客户端实现，服务端不需要安装；TACZ 为可选依赖，不装也能用基础越肩功能。
 
-## Known limitations
+## 从源码构建
 
-- **Bullet/screen parallax** — the shoulder camera is offset sideways while TACZ bullets leave from
-  the player's eyes. The crosshair is therefore drawn at the *projected impact point*, which is
-  geometrically correct but means it is not at the screen center.
-- **Hip-fire spread** — TACZ's `inaccuracy` scatters shots around the aim direction; that is a gun
-  property, not crosshair error.
-- **Recoil** — TACZ kicks the view on firing, so the screen direction and the bullet direction differ
-  for a moment.
-- Wall fade depends on Mixin; if injection ever fails the mod logs a warning and simply skips fading.
-
-## Building
-
-Requires **JDK 17** and **Gradle 8.x** (ForgeGradle 6 + MixinGradle).
+需要 JDK 17，项目自带 Gradle Wrapper：
 
 ```bash
 ./gradlew build
-# output: build/libs/shoulder_aim_sync-<version>.jar
 ```
 
-The first build downloads ForgeGradle and Minecraft dependencies; afterwards `--offline` works.
+产物位于 `build/libs/z80z-shoulder-aim-sync-<版本>.jar`。开发调试：`./gradlew runClient`。
 
-## Credits
+## 环境
 
-- Wall-fade and auto-third-person ideas were informed by [Nimble](https://github.com/Snownee/Nimble)
-  by Snownee (MIT). This mod's implementation is independent and extends it with shoulder offset,
-  aim logic and bullet-projected crosshair.
+- Minecraft 1.20.1
+- Forge 47.4.0
+- Java 17
+- 仅客户端
 
-## License
+## 致谢
 
-[MIT](LICENSE) © 2026 Z80Z99
+贴墙虚化与自动第三人称的实现思路参考了 [Nimble](https://github.com/Snownee/Nimble)（作者 Snownee，MIT 许可）；本模组的实现独立编写，并额外提供肩部偏移、瞄准逻辑与弹道投影准星。
 
----
-
-## 中文说明
-
-Forge 1.20.1 **纯客户端**越肩视角模组，软兼容 **TACZ（永恒枪械工坊：零）**。
-装在客户端即可，不需要装在服务端。
-
-### 功能
-
-- **接管 F5**：`第一人称 → 越肩 → 第三人称后 → 第三人称前`
-- **X 键换肩**：0.15 秒平滑横移，保留惯性，可改键（不用 R，避免与 TACZ 换弹冲突）
-- **三种跟随模式**：平滑插值 / 弹簧阻尼 / 固定跟随
-- **瞄准变焦 + 机身前探**
-- **狙击强制第一人称**：按枪械类型识别，开镜切第一人称，松手恢复，带镜片黑框过渡
-- **越肩准星**：按弹道命中点投影对齐，不画在屏幕中心
-- **贴墙虚化**：镜头贴近时身体、盔甲、鞘翅一起淡出，不再穿模
-- **自动越肩**：上坐骑、鞘翅滑翔时自动切换
-- **鞘翅滚转**：滑翔转弯时画面倾斜
-- **K 键设置界面**
-
-### 默认键位
-
-| 功能 | 键 |
-| --- | --- |
-| 切换视角 | F5 |
-| 换肩 | X |
-| 打开设置 | K |
-
-### 兼容性要点
-
-- 装了 **TACZ-addon** 且其 `enableBetterAimCamera` 保持开启时，瞄准会立刻切第一人称，
-  本模组的越肩变焦面板基本不生效；想用越肩变焦请关掉 addon 该项。
-- 同时开启“第一人称也变焦”与 TACZ 倍镜会双重放大，建议保持关闭。
-- 与 **ShoulderSurfing** 都会接管相机，不建议同时安装。
-
-### 构建
-
-需要 JDK 17 + Gradle 8.x：`./gradlew build`，产物在 `build/libs/`。
-
-### 许可
+## 许可证
 
 [MIT](LICENSE) © 2026 Z80Z99

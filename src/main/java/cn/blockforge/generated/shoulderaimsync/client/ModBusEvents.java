@@ -1,7 +1,7 @@
-package io.github.z80z99.shoulderaimsync.client;
+package cn.blockforge.generated.shoulderaimsync.client;
 
-import io.github.z80z99.shoulderaimsync.OSConfig;
-import io.github.z80z99.shoulderaimsync.ShoulderAimSyncMod;
+import cn.blockforge.generated.shoulderaimsync.OSConfig;
+import cn.blockforge.generated.shoulderaimsync.ShoulderAimSyncMod;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;

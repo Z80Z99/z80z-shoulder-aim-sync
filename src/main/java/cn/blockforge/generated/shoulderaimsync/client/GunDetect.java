@@ -1,6 +1,6 @@
-package io.github.z80z99.shoulderaimsync.client;
+package cn.blockforge.generated.shoulderaimsync.client;
 
-import io.github.z80z99.shoulderaimsync.OSConfig;
+import cn.blockforge.generated.shoulderaimsync.OSConfig;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class GunDetect {
 
-    private static final Logger LOGGER = LogManager.getLogger("shoulder_aim_sync");
+    private static final Logger LOGGER = LogManager.getLogger("z80z_shoulder_aim_sync");
 
     private static final Map<Class<?>, Method[]> METHOD_CACHE = new ConcurrentHashMap<>();
     private static final Map<String, Boolean> SNIPER_CACHE = new ConcurrentHashMap<>();
@@ -157,7 +157,7 @@ public final class GunDetect {
                     try {
                         m.setAccessible(true);
                     } catch (Throwable t) {
-                        LOGGER.debug("[shoulder_aim_sync] 无法访问 {}.getGunId", cur.getName());
+                        LOGGER.debug("[z80z_shoulder_aim_sync] 无法访问 {}.getGunId", cur.getName());
                         continue;
                     }
                     return new Method[]{m};

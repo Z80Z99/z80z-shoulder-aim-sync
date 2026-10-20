@@ -1,6 +1,6 @@
-package io.github.z80z99.shoulderaimsync.mixin;
+package cn.blockforge.generated.shoulderaimsync.mixin;
 
-import io.github.z80z99.shoulderaimsync.client.PlayerFade;
+import cn.blockforge.generated.shoulderaimsync.client.PlayerFade;
 import net.minecraft.client.model.geom.ModelPart;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

@@ -1,9 +1,9 @@
-package io.github.z80z99.shoulderaimsync;
+package cn.blockforge.generated.shoulderaimsync;
 
-import io.github.z80z99.shoulderaimsync.client.AutoViewSwitch;
-import io.github.z80z99.shoulderaimsync.client.ClientEvents;
-import io.github.z80z99.shoulderaimsync.client.ModBusEvents;
-import io.github.z80z99.shoulderaimsync.client.PlayerFade;
+import cn.blockforge.generated.shoulderaimsync.client.AutoViewSwitch;
+import cn.blockforge.generated.shoulderaimsync.client.ClientEvents;
+import cn.blockforge.generated.shoulderaimsync.client.ModBusEvents;
+import cn.blockforge.generated.shoulderaimsync.client.PlayerFade;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -14,7 +14,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
 /**
- * 越肩视角与枪械瞄准兼容（shoulder_aim_sync）
+ * 越肩视角与枪械瞄准兼容（z80z_shoulder_aim_sync）
  *
  * 纯客户端模组：
  * - 平滑接管原版 F5 视角切换，新增左右越肩模式；
@@ -26,7 +26,7 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
  */
 @Mod(ShoulderAimSyncMod.MODID)
 public final class ShoulderAimSyncMod {
-    public static final String MODID = "shoulder_aim_sync";
+    public static final String MODID = "z80z_shoulder_aim_sync";
 
     @SuppressWarnings("removal")
     public ShoulderAimSyncMod() {

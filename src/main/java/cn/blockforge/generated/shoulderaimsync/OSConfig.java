@@ -1,4 +1,4 @@
-package io.github.z80z99.shoulderaimsync;
+package cn.blockforge.generated.shoulderaimsync;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;

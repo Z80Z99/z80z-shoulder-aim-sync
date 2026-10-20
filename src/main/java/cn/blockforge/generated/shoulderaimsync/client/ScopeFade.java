@@ -1,6 +1,6 @@
-package io.github.z80z99.shoulderaimsync.client;
+package cn.blockforge.generated.shoulderaimsync.client;
 
-import io.github.z80z99.shoulderaimsync.OSConfig;
+import cn.blockforge.generated.shoulderaimsync.OSConfig;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 

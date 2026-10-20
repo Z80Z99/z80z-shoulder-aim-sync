@@ -1,4 +1,4 @@
-package io.github.z80z99.shoulderaimsync.client;
+package cn.blockforge.generated.shoulderaimsync.client;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class TaczCompat {
 
-    private static final Logger LOGGER = LogManager.getLogger("shoulder_aim_sync");
+    private static final Logger LOGGER = LogManager.getLogger("z80z_shoulder_aim_sync");
     private static final String TACZ_MODID = "tacz";
     private static final String TACZ_ITEM_PACKAGE = "com.tacz.guns.";
     /** TACZ 把枪械 ID 存在物品根标签的这个键上（GunItemDataAccessor.GUN_ID_TAG）。 */
@@ -96,10 +96,10 @@ public final class TaczCompat {
             }
 
             if (gunOperatorClass == null || gunClass == null) {
-                LOGGER.warn("[shoulder_aim_sync] 检测到 tacz 但反射接口不完整，将退回通用枪械识别（瞄准同步功能不可用）");
+                LOGGER.warn("[z80z_shoulder_aim_sync] 检测到 tacz 但反射接口不完整，将退回通用枪械识别（瞄准同步功能不可用）");
             }
         } catch (Throwable t) {
-            LOGGER.warn("[shoulder_aim_sync] TACZ 反射初始化失败，将退回通用枪械识别", t);
+            LOGGER.warn("[z80z_shoulder_aim_sync] TACZ 反射初始化失败，将退回通用枪械识别", t);
         }
     }
 

@@ -1,6 +1,6 @@
-package io.github.z80z99.shoulderaimsync.client;
+package cn.blockforge.generated.shoulderaimsync.client;
 
-import io.github.z80z99.shoulderaimsync.OSConfig;
+import cn.blockforge.generated.shoulderaimsync.OSConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.LivingEntity;
@@ -18,7 +18,7 @@ import org.apache.logging.log4j.Logger;
  */
 public final class PlayerFade {
 
-    private static final Logger LOGGER = LogManager.getLogger("shoulder_aim_sync");
+    private static final Logger LOGGER = LogManager.getLogger("z80z_shoulder_aim_sync");
 
     /** 相机距眼睛 ≥ 该值：完全不虚化（正常越肩约 1.28 格，不受影响） */
     private static final double FADE_FAR = 0.9;
@@ -125,6 +125,6 @@ public final class PlayerFade {
 
     static {
         // 仅用于诊断：确认该类被加载（日志排查用）
-        LOGGER.debug("[shoulder_aim_sync] PlayerFade 已加载（mixin 渲染路径）");
+        LOGGER.debug("[z80z_shoulder_aim_sync] PlayerFade 已加载（mixin 渲染路径）");
     }
 }

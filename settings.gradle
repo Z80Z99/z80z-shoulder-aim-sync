@@ -6,4 +6,4 @@ pluginManagement {
         mavenCentral()
     }
 }
-rootProject.name = 'shoulder-aim-sync'
+rootProject.name = 'blockforge-generated'

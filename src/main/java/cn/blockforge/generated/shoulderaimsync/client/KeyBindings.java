@@ -1,6 +1,6 @@
-package io.github.z80z99.shoulderaimsync.client;
+package cn.blockforge.generated.shoulderaimsync.client;
 
-import io.github.z80z99.shoulderaimsync.ShoulderAimSyncMod;
+import cn.blockforge.generated.shoulderaimsync.ShoulderAimSyncMod;
 import net.minecraft.client.KeyMapping;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import org.lwjgl.glfw.GLFW;
