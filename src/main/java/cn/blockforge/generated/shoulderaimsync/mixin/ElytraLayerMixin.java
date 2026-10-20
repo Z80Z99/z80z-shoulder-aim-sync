@@ -17,7 +17,8 @@ public class ElytraLayerMixin {
     @Redirect(
             method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/entity/LivingEntity;FFFFFF)V",
             at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/client/renderer/RenderType;armorCutoutNoCull(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/client/renderer/RenderType;"))
+                    target = "Lnet/minecraft/client/renderer/RenderType;armorCutoutNoCull(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/client/renderer/RenderType;"),
+            require = 0)
     private RenderType shoulder$translucentElytra(ResourceLocation texture) {
         if (PlayerFade.inModelScope()) {
             return RenderType.entityTranslucentCull(texture);

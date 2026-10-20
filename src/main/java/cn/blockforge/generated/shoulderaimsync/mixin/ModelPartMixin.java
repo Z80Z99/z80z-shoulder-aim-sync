@@ -17,7 +17,8 @@ public class ModelPartMixin {
             method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;IIFFFF)V",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/client/model/geom/ModelPart;compile(Lcom/mojang/blaze3d/vertex/PoseStack$Pose;Lcom/mojang/blaze3d/vertex/VertexConsumer;IIFFFF)V"),
-            index = 7)
+            index = 7,
+            require = 0)
     private float shoulder$fadeAlpha(float alpha) {
         return PlayerFade.scopeAlpha(alpha);
     }
