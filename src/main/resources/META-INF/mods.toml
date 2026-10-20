@@ -1,0 +1,37 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="MIT"
+# 纯客户端模组：Forge 47.4+ 会在专用服务端直接跳过本模组；47.3 会忽略该字段（无副作用）
+clientSideOnly=true
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+authors="Z80Z99"
+displayURL="https://github.com/Z80Z99/shoulder-aim-sync"
+issueTrackerURL="https://github.com/Z80Z99/shoulder-aim-sync/issues"
+displayTest="IGNORE_ALL_VERSION"
+description='''Smooth over-the-shoulder camera with TACZ gun-aim compatibility.
+平滑越肩视角 + TACZ 枪械瞄准兼容：
+· F5 接管原版视角切换：第一人称→越肩→第三人称后→第三人称前
+· X 键秒换肩（0.15 秒平滑横移，保留惯性，按键可自定义）
+· 平滑插值 / 弹簧阻尼 / 固定跟随三种相机模式
+· 枪械瞄准时渐进变焦（FOV 收窄）+ 机身前探贴肩
+· 狙击枪瞄准强制第一人称（松手立刻恢复），带镜片黑框过渡
+· 越肩持枪准星，按弹道命中点投影对齐
+· 贴墙时人物模型虚化
+· 骑乘 / 鞘翅滑翔自动越肩，滑翔转弯画面滚转
+· K 键打开设置界面，参数均可自定义
+纯客户端模组，安装到客户端即可，不需要装在服务端。'''
+[[dependencies.${mod_id}]]
+modId="forge"
+mandatory=true
+versionRange="[47,)"
+ordering="NONE"
+side="BOTH"
+[[dependencies.${mod_id}]]
+modId="minecraft"
+mandatory=true
+versionRange="[${minecraft_version}]"
+ordering="NONE"
+side="BOTH"

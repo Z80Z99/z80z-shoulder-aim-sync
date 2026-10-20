@@ -1,0 +1,12 @@
+* text=auto eol=lf
+
+*.java text
+*.gradle text
+*.json text
+*.toml text
+*.md text
+*.properties text
+
+*.jar binary
+*.png binary
+*.ogg binary

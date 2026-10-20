@@ -1,0 +1,25 @@
+# Gradle
+.gradle/
+build/
+run/
+logs/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+bin/
+
+# MixinGradle / FG generated
+*.refmap.json.bak
+src/main/resources/*.refmap.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local
+*.log
