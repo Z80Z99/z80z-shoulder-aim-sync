@@ -91,6 +91,7 @@ public class SettingsScreen extends Screen {
         followRows.add(sliderRow("offsetY", -0.5, 0.6, OSConfig.OFFSET_Y, SettingsScreen::fmtBlock));
         followRows.add(sliderRow("back", 0.25, 2.5, OSConfig.BACK, SettingsScreen::fmtBlock));
         followRows.add(sliderRow("slide", 0.02, 0.8, OSConfig.SLIDE, SettingsScreen::fmtSec));
+        followRows.add(sliderRow("viewSwitchTime", 0.0, 0.8, OSConfig.VIEW_SWITCH, SettingsScreen::fmtSec));
         followRows.add(toggleRow("rightSide", OSConfig.RIGHT_SIDE));
         followRows.add(toggleRow("avoidWall", OSConfig.AVOID_WALL));
         followRows.add(toggleRow("fadePlayer", OSConfig.FADE_PLAYER));
@@ -405,6 +406,7 @@ public class SettingsScreen extends Screen {
         OSConfig.OFFSET_Y.set(OSConfig.DEF_OFFSET_Y);
         OSConfig.BACK.set(OSConfig.DEF_BACK);
         OSConfig.SLIDE.set(OSConfig.DEF_SLIDE);
+        OSConfig.VIEW_SWITCH.set(OSConfig.DEF_VIEW_SWITCH);
         OSConfig.AVOID_WALL.set(OSConfig.DEF_AVOID_WALL);
         OSConfig.FADE_PLAYER.set(OSConfig.DEF_FADE_PLAYER);
         OSConfig.AUTO_RIDING.set(OSConfig.DEF_AUTO_RIDING);

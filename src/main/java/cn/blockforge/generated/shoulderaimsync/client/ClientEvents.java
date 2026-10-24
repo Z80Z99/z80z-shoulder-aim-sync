@@ -172,13 +172,20 @@ public class ClientEvents {
         }
         OSConfig.Cfg c = OSConfig.CACHE;
         AimTracker.frame(dt, (float) event.getPartialTick(), c);
+        if (event.getCamera().getEntity() != mc.player) return;
+
+        if (ViewManager.isSwitchAnimating()) {
+            // 视角切换过渡：从起点平滑滑到目标视角位置（含模型淡入淡出）
+            Vec3 pos = ViewManager.stepSwitch(mc, event.getCamera(), (float) event.getPartialTick(), dt, c);
+            CameraBridge.setPosition(event.getCamera(), pos);
+            return;
+        }
 
         if (!ViewManager.shoulderActive(c, mc)) {
             // 不接管（含 TACZ-addon 强制第一人称）：清掉锚点，避免切回时镜头滑动
             ViewManager.markInactive();
             return;
         }
-        if (event.getCamera().getEntity() != mc.player) return;
 
         Vec3 pos = ViewManager.step(mc, event.getCamera(), (float) event.getPartialTick(), dt, c);
         CameraBridge.setPosition(event.getCamera(), pos);

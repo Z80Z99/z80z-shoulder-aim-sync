@@ -6,7 +6,7 @@ Minecraft 1.20.1 · Forge 47.4.0 · Java 17 · 仅客户端
 
 ## 功能
 
-- **接管 F5**：`第一人称 → 越肩 → 第三人称后 → 第三人称前`。
+- **接管 F5**：`第一人称 → 越肩 → 第三人称后 → 第三人称前`，切换带平滑过渡与模型淡入淡出（可调时长，0=瞬时）。
 - **X 键换肩**：0.15 秒平滑横移，保留惯性；默认不用 R，避免与 TACZ 换弹冲突。
 - **三种跟随模式**：平滑插值（SMOOTH）、弹簧阻尼（SPRING）、固定跟随（FIXED，无延迟）。
 - **瞄准变焦 + 机身前探**：手持枪械瞄准时 FOV 渐进收窄、相机前移贴肩。
@@ -50,6 +50,7 @@ Minecraft 1.20.1 · Forge 47.4.0 · Java 17 · 仅客户端
 | `camera.shoulderOffsetX` / `shoulderOffsetY` | 0.55 / 0.08 | 肩部左右/高度偏移（格） |
 | `camera.backDistance` | 1.15 | 相机后退距离（格） |
 | `camera.shoulderSlideTime` | 0.15 | 换肩横移时间（秒） |
+| `camera.viewSwitchTime` | 0.25 | F5 视角切换平滑过渡（秒），0=瞬时 |
 | `camera.avoidWall` | true | 贴墙自动收缩 |
 | `camera.fadePlayerWhenClose` | true | 镜头贴近时虚化人物 |
 | `aim.aimZoom` | true | 瞄准渐进变焦 |

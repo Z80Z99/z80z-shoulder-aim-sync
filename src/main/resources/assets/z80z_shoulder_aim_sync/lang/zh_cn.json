@@ -24,6 +24,7 @@
   "option.z80z_shoulder_aim_sync.offsetY": "高度偏移",
   "option.z80z_shoulder_aim_sync.back": "后退距离",
   "option.z80z_shoulder_aim_sync.slide": "换肩横移时间",
+  "option.z80z_shoulder_aim_sync.viewSwitchTime": "视角切换过渡",
   "option.z80z_shoulder_aim_sync.rightSide": "默认右肩",
   "option.z80z_shoulder_aim_sync.avoidWall": "贴墙自动收缩",
   "option.z80z_shoulder_aim_sync.fadePlayer": "贴墙虚化人物",

@@ -26,6 +26,7 @@ public final class OSConfig {
     public static final double DEF_OFFSET_Y = 0.08;
     public static final double DEF_BACK = 1.15;
     public static final double DEF_SLIDE = 0.15;
+    public static final double DEF_VIEW_SWITCH = 0.25;
     public static final boolean DEF_AVOID_WALL = true;
     public static final boolean DEF_ZOOM = true;
     public static final double DEF_ZOOM_FACTOR = 0.7;
@@ -68,6 +69,7 @@ public final class OSConfig {
     public static ForgeConfigSpec.DoubleValue OFFSET_Y;
     public static ForgeConfigSpec.DoubleValue BACK;
     public static ForgeConfigSpec.DoubleValue SLIDE;
+    public static ForgeConfigSpec.DoubleValue VIEW_SWITCH;
     public static ForgeConfigSpec.BooleanValue AVOID_WALL;
     public static ForgeConfigSpec.BooleanValue ZOOM;
     public static ForgeConfigSpec.DoubleValue ZOOM_FACTOR;
@@ -122,6 +124,7 @@ public final class OSConfig {
         OFFSET_Y = b.comment("竖直偏移(格)，相对眼睛").defineInRange("shoulderOffsetY", DEF_OFFSET_Y, -0.5, 0.6);
         BACK = b.comment("相机在玩家身后的距离(格)").defineInRange("backDistance", DEF_BACK, 0.25, 2.5);
         SLIDE = b.comment("R 键换肩横移时间(秒)，默认 0.15").defineInRange("shoulderSlideTime", DEF_SLIDE, 0.02, 0.8);
+        VIEW_SWITCH = b.comment("F5 视角切换的平滑过渡时间(秒)，0=瞬时切换").defineInRange("viewSwitchTime", DEF_VIEW_SWITCH, 0.0, 0.8);
         AVOID_WALL = b.comment("镜头贴墙自动收缩").define("avoidWall", DEF_AVOID_WALL);
         FADE_PLAYER = b.comment("镜头贴得很近时虚化人物模型（更近则直接隐藏），避免身体糊住屏幕").define("fadePlayerWhenClose", DEF_FADE_PLAYER);
 
@@ -178,6 +181,7 @@ public final class OSConfig {
         c.offY = clamp(OFFSET_Y.get(), -0.5, 0.6);
         c.back = clamp(BACK.get(), 0.25, 2.5);
         c.slide = clamp(SLIDE.get(), 0.02, 0.8);
+        c.viewSwitchTime = clamp(VIEW_SWITCH.get(), 0.0, 0.8);
         c.avoidWall = AVOID_WALL.get();
         c.zoom = ZOOM.get();
         c.zoomFactor = clamp(ZOOM_FACTOR.get(), 0.35, 1.0);
@@ -244,6 +248,7 @@ public final class OSConfig {
         public double offY = DEF_OFFSET_Y;
         public double back = DEF_BACK;
         public double slide = DEF_SLIDE;
+        public double viewSwitchTime = DEF_VIEW_SWITCH;
         public boolean avoidWall = DEF_AVOID_WALL;
         public boolean zoom = DEF_ZOOM;
         public double zoomFactor = DEF_ZOOM_FACTOR;

@@ -24,6 +24,7 @@
   "option.z80z_shoulder_aim_sync.offsetY": "Height Offset",
   "option.z80z_shoulder_aim_sync.back": "Back Distance",
   "option.z80z_shoulder_aim_sync.slide": "Shoulder Slide Time",
+  "option.z80z_shoulder_aim_sync.viewSwitchTime": "View Switch Transition",
   "option.z80z_shoulder_aim_sync.rightSide": "Default Right Shoulder",
   "option.z80z_shoulder_aim_sync.avoidWall": "Wall Avoidance",
   "option.z80z_shoulder_aim_sync.fadePlayer": "Fade Player When Close",

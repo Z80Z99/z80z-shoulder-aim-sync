@@ -99,13 +99,17 @@ public final class PlayerFade {
         if (event.getEntity() != player || mc.level == null) return;
         // 打开界面时（如背包里的玩家预览）不参与淡出
         if (mc.screen != null) return;
-        if (!ViewManager.shoulderActive(c, mc)) return;
+        // 越肩或视角切换动画期间参与淡入淡出：
+        // 切换动画的镜头会从眼睛出发/穿过头部，正好复用距离淡出规则
+        boolean switching = ViewManager.isSwitchAnimating();
+        if (!ViewManager.shoulderActive(c, mc) && !switching) return;
 
         double dist = mc.gameRenderer.getMainCamera().getPosition()
                 .distanceTo(player.getEyePosition(event.getPartialTick()));
         if (dist >= FADE_FAR) return;
 
-        if (dist <= HIDE_DIST) {
+        // 切换动画期间不整体隐藏（避免“隐藏→可见”跳变），只用连续 alpha
+        if (!switching && dist <= HIDE_DIST) {
             // 镜头几乎贴在头上：本帧整个玩家不画
             event.setCanceled(true);
             return;

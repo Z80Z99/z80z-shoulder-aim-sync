@@ -4,7 +4,7 @@ plugins {
     // MixinGradle 必须在 ForgeGradle 之后应用
     id 'org.spongepowered.mixin' version '0.7.38'
 }
-version = '1.0.0-r10'
+version = '1.0.0-r11'
 group = 'cn.blockforge.generated.shoulderaimsync'
 base { archivesName = 'z80z-shoulder-aim-sync' }
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)

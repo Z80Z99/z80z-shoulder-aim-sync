@@ -42,6 +42,15 @@ public final class ViewManager {
     /** 上一帧是否真正处于越肩覆写状态，用于识别“从外部第一人称/普通第三人称切回” */
     private static boolean wasShoulderActive = false;
 
+    // ---------------- 视角切换过渡 ----------------
+
+    /** 切换动画起点（世界坐标）；null = 无动画 */
+    private static volatile Vec3 switchFrom = null;
+    private static volatile double switchProgress;
+    private static volatile Mode switchTargetMode;
+    /** 目标是第一人称：动画期间保持第三人称渲染，结束才翻转 cameraType */
+    private static volatile boolean pendingFp;
+
     private ViewManager() {
     }
 
@@ -86,9 +95,33 @@ public final class ViewManager {
     }
 
     public static void applyMode(Mode m, Minecraft mc) {
+        OSConfig.Cfg c = OSConfig.CACHE;
+        // 模式或原版相机类型任一不一致才需要动画（跨世界重进时 mode 保持、
+        // cameraType 却可能停在第一人称，也要平滑拉出）
+        boolean animate = c.enabled && c.viewSwitchTime > 0.0
+                && (m != mode || mc.options.getCameraType() != expectedCamType(m))
+                && mc.player != null && !mc.player.isSpectator();
+
         mode = m;
         ourFp = false;
         anchor = null;
+
+        if (animate) {
+            // 起点 = 当前实际相机位置；动画中再切换则从当前动画位置无缝重启
+            switchFrom = mc.gameRenderer.getMainCamera().getPosition();
+            switchProgress = 0.0;
+            switchTargetMode = m;
+            if (m == Mode.FIRST) {
+                // 目标第一人称：先保持第三人称渲染（手不闪现），动画结束再翻转
+                pendingFp = true;
+            } else {
+                pendingFp = false;
+                mc.options.setCameraType(expectedCamType(m));
+            }
+            return;
+        }
+        pendingFp = false;
+        switchTargetMode = null;
         mc.options.setCameraType(expectedCamType(m));
     }
 
@@ -122,6 +155,24 @@ public final class ViewManager {
         clipDist = Double.MAX_VALUE;
         lastPlayerPos = null;
         wasShoulderActive = false;
+        clearSwitch(true);
+    }
+
+    /** 结束切换动画；restoreFp 时若目标是第一人称则补翻转 cameraType */
+    private static void clearSwitch(boolean restoreFp) {
+        if (restoreFp && pendingFp) {
+            Minecraft mc = Minecraft.getInstance();
+            if (mc != null) mc.options.setCameraType(CameraType.FIRST_PERSON);
+        }
+        pendingFp = false;
+        switchFrom = null;
+        switchTargetMode = null;
+        switchProgress = 0.0;
+    }
+
+    /** 切换动画是否进行中（渲染线程与客户端线程都会查询） */
+    public static boolean isSwitchAnimating() {
+        return switchFrom != null;
     }
 
     /**
@@ -137,6 +188,9 @@ public final class ViewManager {
 
     /** 每个 client tick：吸收外部（非本模组）对相机类型的改动 */
     public static void tickSync(OSConfig.Cfg c, Minecraft mc) {
+        if (isSwitchAnimating()) {
+            return; // 切换动画期间 cameraType 可能与 mode 不一致（pendingFp），不干预
+        }
         CameraType ct = mc.options.getCameraType();
         if (mode == Mode.SHOULDER && ct.isFirstPerson() && (ourFp || externalFp(mc))) {
             return; // 合法的偏离：狙击强制开镜或 TACZ/TACZ-addon 自动第一人称
@@ -149,6 +203,68 @@ public final class ViewManager {
     }
 
     // ---------------- 每帧锚点解算 ----------------
+
+    /**
+     * 视角切换过渡：把相机从切换起点平滑滑到目标视角的位置。
+     * 每渲染帧调用（动画期间代替 {@link #step}）。
+     */
+    public static Vec3 stepSwitch(Minecraft mc, Camera cam, float partialTick, double dt, OSConfig.Cfg c) {
+        Vec3 from = switchFrom;
+        Mode target = switchTargetMode;
+        if (from == null || target == null) return cam.getPosition();
+
+        // 传送保护：玩家瞬移时立即完成
+        Vec3 playerPos = mc.player.getPosition(partialTick);
+        if (lastPlayerPos != null && lastPlayerPos.distanceToSqr(playerPos) > TELEPORT_THRESHOLD_SQR) {
+            lastPlayerPos = playerPos;
+            finishSwitch(mc);
+            return switchEndPosition(mc, cam, partialTick, c, target);
+        }
+        lastPlayerPos = playerPos;
+
+        updateSideAnim(c);
+        Vec3 end = switchEndPosition(mc, cam, partialTick, c, target);
+
+        double t = easeInOut(clamp01(switchProgress));
+        Vec3 pos = new Vec3(
+                lerp(from.x, end.x, t),
+                lerp(from.y, end.y, t),
+                lerp(from.z, end.z, t));
+
+        if (target != Mode.FIRST && c.avoidWall) {
+            pos = applyWallClip(mc, partialTick, dt, pos);
+        }
+
+        // anchor 跟随动画位置：动画结束后常规跟随从当前点无缝续上
+        anchor = pos;
+        velocity = Vec3.ZERO;
+        wasShoulderActive = target == Mode.SHOULDER;
+
+        switchProgress += dt / Math.max(0.02, c.viewSwitchTime);
+        if (switchProgress >= 1.0) {
+            finishSwitch(mc);
+        }
+        return pos;
+    }
+
+    /** 动画目标视角对应的相机位置 */
+    private static Vec3 switchEndPosition(Minecraft mc, Camera cam, float partialTick, OSConfig.Cfg c, Mode target) {
+        return switch (target) {
+            case SHOULDER -> computeTarget(mc, cam, partialTick, c);
+            case FIRST -> mc.player.getEyePosition(partialTick);
+            // 原版本帧位置：事件在 Camera.setup 之后触发，THIRD_BACK/FRONT 的
+            // 位置已含 4 格后退与碰撞收缩，直接取即可
+            default -> cam.getPosition();
+        };
+    }
+
+    private static void finishSwitch(Minecraft mc) {
+        boolean wasPendingFp = pendingFp;
+        clearSwitch(false);
+        if (wasPendingFp) {
+            mc.options.setCameraType(CameraType.FIRST_PERSON);
+        }
+    }
 
     /**
      * 计算并平滑本帧相机锚点。dt 为帧间隔（秒）。
