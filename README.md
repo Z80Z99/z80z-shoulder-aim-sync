@@ -4,6 +4,8 @@ Minecraft 1.20.1 Forge **客户端**模组：把原版第三人称改成可左�
 
 Minecraft 1.20.1 · Forge 47.4.0 · Java 17 · 仅客户端
 
+**[English](#english) | [简体中文](#简体中文)**
+
 ## 功能
 
 - **接管 F5**：`第一人称 → 越肩 → 第三人称后 → 第三人称前`，切换带平滑过渡与模型淡入淡出（可调时长，0=瞬时）。
@@ -115,5 +117,57 @@ Minecraft 1.20.1 · Forge 47.4.0 · Java 17 · 仅客户端
 贴墙虚化与自动第三人称的实现思路参考了 [Nimble](https://github.com/Snownee/Nimble)（作者 Snownee，MIT 许可）；本模组的实现独立编写，并额外提供肩部偏移、瞄准逻辑与弹道投影准星。
 
 ## 许可证
+
+[MIT](LICENSE) © 2026 Z80Z99
+
+## English
+
+A client-side mod for Minecraft 1.20.1 (Forge 47.4.0, Java 17) that replaces vanilla third person with a swappable over-the-shoulder camera, with soft compatibility for TACZ gun aiming, zooming and scoping.
+
+### Features
+
+- **F5 takeover**: `first person → over-shoulder → third person back → third person front`, with smooth transitions and player-model fading (adjustable duration, 0 = instant)
+- **X to swap shoulders**: 0.15s smooth slide with inertia; defaults away from R to avoid clashing with TACZ reloading
+- **Three follow modes**: smoothed interpolation (SMOOTH), spring-damper (SPRING), fixed (FIXED, zero latency)
+- **Aim zoom + body push**: holding a gun in aim narrows the FOV and pushes the camera toward the shoulder
+- **Forced first person for snipers**: detected via TACZ gun-pack types; scoping switches to first person, releasing returns, with a lens-black transition
+- **Over-shoulder crosshair**: TACZ only draws its crosshair in first person — this mod adds one while aiming from the shoulder, projected onto the real ballistic hit point
+- **Wall fade**: when the camera is squeezed by walls, the body, armor and elytra fade to translucent instead of clipping
+- **Auto over-shoulder** when mounting or gliding; reverts automatically
+- **Elytra roll**: the screen rolls with your turn while gliding
+- **K settings screen**: everything adjustable; three-column layout on widescreen, paged on narrow
+
+### Default keys
+
+| Function | Key |
+| --- | --- |
+| Cycle views | `F5` (takes over the vanilla key) |
+| Swap shoulder | `X` |
+| Settings | `K` |
+
+### Config
+
+Client config: `config/z80z_shoulder_aim_sync-client.toml`, or press `K` in game. Highlights: `general.takeoverF5`, `general.autoShoulder` (also for riding/elytra), `camera.followMode` (SMOOTH/SPRING/FIXED), `camera.shoulderOffsetX/Y`, `camera.backDistance`, `camera.fadePlayerWhenClose`, `aim.zoomFactor`, `aim.aimPush`, `aim.deferToTaczScope`, `sniper.forceFirstPersonSniper`, `elytra.elytraRollScreen`, `compat.gunModIds` (default `["tacz"]`).
+
+### Compatibility
+
+- **TACZ**: guns detected via `IGun` and the `GunId` NBT; ammo/attachments/workbenches are never misidentified; aim state reads TACZ's `isAim()` and scope progress; sniper detection prefers the gun pack's `type` field
+- **TACZ-addon**: its `enableBetterAimCamera` auto-switches to first person on aim — disable it to use this mod's shoulder zoom
+- **ShoulderSurfing**: both take over the camera; not recommended together
+
+### Known limitations
+
+- The over-shoulder camera is offset while TACZ bullets originate at the eyes, so the crosshair sits at the projection of the ballistic hit point rather than screen center — geometrically correct by design
+- Hip-fire inaccuracy spreads hits around the crosshair (a weapon property), and recoil briefly kicks the view
+
+### Install
+
+1. Install [Minecraft Forge 1.20.1-47.4.0](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.20.1.html).
+2. Download the latest `z80z-shoulder-aim-sync-<version>.jar` from [Releases](https://github.com/Z80Z99/z80z-shoulder-aim-sync/releases).
+3. Drop it into the client's `mods` folder — servers don't need it. TACZ is optional; base over-shoulder works without it.
+
+### Credits & license
+
+Wall fade and auto-third-person ideas reference [Nimble](https://github.com/Snownee/Nimble) by Snownee (MIT); the implementation here is independent, adding shoulder offsets, aim logic and ballistic crosshair projection.
 
 [MIT](LICENSE) © 2026 Z80Z99
