@@ -1,6 +1,6 @@
-package cn.blockforge.generated.shoulderaimsync.mixin;
+package com.github.z80z.shoulderaimsync.mixin;
 
-import cn.blockforge.generated.shoulderaimsync.client.PlayerFade;
+import com.github.z80z.shoulderaimsync.client.PlayerFade;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.resources.ResourceLocation;

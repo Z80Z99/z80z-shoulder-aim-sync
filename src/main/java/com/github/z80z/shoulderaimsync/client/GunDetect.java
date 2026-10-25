@@ -1,6 +1,6 @@
-package cn.blockforge.generated.shoulderaimsync.client;
+package com.github.z80z.shoulderaimsync.client;
 
-import cn.blockforge.generated.shoulderaimsync.OSConfig;
+import com.github.z80z.shoulderaimsync.OSConfig;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;

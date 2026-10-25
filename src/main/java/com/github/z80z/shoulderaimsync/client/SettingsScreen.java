@@ -1,7 +1,7 @@
-package cn.blockforge.generated.shoulderaimsync.client;
+package com.github.z80z.shoulderaimsync.client;
 
-import cn.blockforge.generated.shoulderaimsync.OSConfig;
-import cn.blockforge.generated.shoulderaimsync.ShoulderAimSyncMod;
+import com.github.z80z.shoulderaimsync.OSConfig;
+import com.github.z80z.shoulderaimsync.ShoulderAimSyncMod;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;

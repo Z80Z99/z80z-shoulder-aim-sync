@@ -1,4 +1,4 @@
-package cn.blockforge.generated.shoulderaimsync.client;
+package com.github.z80z.shoulderaimsync.client;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;

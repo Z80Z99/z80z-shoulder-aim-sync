@@ -1,4 +1,4 @@
-package cn.blockforge.generated.shoulderaimsync.client;
+package com.github.z80z.shoulderaimsync.client;
 
 import net.minecraft.client.Camera;
 import net.minecraft.core.BlockPos;

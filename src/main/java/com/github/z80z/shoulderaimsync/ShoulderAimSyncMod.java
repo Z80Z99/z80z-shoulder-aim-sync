@@ -1,9 +1,9 @@
-package cn.blockforge.generated.shoulderaimsync;
+package com.github.z80z.shoulderaimsync;
 
-import cn.blockforge.generated.shoulderaimsync.client.AutoViewSwitch;
-import cn.blockforge.generated.shoulderaimsync.client.ClientEvents;
-import cn.blockforge.generated.shoulderaimsync.client.ModBusEvents;
-import cn.blockforge.generated.shoulderaimsync.client.PlayerFade;
+import com.github.z80z.shoulderaimsync.client.AutoViewSwitch;
+import com.github.z80z.shoulderaimsync.client.ClientEvents;
+import com.github.z80z.shoulderaimsync.client.ModBusEvents;
+import com.github.z80z.shoulderaimsync.client.PlayerFade;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
