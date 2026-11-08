@@ -7,6 +7,7 @@ import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -292,6 +293,9 @@ public class SettingsScreen extends Screen {
             OSConfig.saveNow();
             sync.run();
         }).bounds(x, y, w, WIDGET_H).build();
+        if (val == OSConfig.CROSSHAIR) {
+            b.setTooltip(Tooltip.create(Component.translatable(O + "crosshair.tip")));
+        }
         holder[0] = b;
         sync.run();
         addRenderableWidget(b);

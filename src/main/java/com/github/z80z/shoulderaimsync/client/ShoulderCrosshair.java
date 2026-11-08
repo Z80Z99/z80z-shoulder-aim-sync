@@ -1,9 +1,15 @@
 package com.github.z80z.shoulderaimsync.client;
 
 import com.github.z80z.shoulderaimsync.OSConfig;
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.CrossbowItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
@@ -15,13 +21,8 @@ import org.joml.Vector4f;
 import java.util.Locale;
 
 /**
- * 越肩准星：画在“弹道命中点”的屏幕投影位置，而不是屏幕中心。
- *
- * 越肩相机横移后屏幕中心对应的是相机平行射线，与从眼睛发出的弹道错开，
- * 近距离偏差明显。这里把实时射线的命中点用本帧真实投影矩阵投到 GUI 坐标。
- *
- * 注意：不能依赖原版 hitResult——它的方块检测距离只有 4.5 格，超出即是 MISS，
- * 而枪械弹道可达上百格。
+ * 越肩准星：枪械沿用长距离射线，弓弩显示瞄准方向参考，普通物品对齐原版交互目标。
+ * 使用本帧真实投影矩阵绘制，避免肩部偏移造成屏幕中心与目标错位。
  */
 public final class ShoulderCrosshair {
 
@@ -30,6 +31,8 @@ public final class ShoulderCrosshair {
     /** TACZ 子弹出生点比眼睛高 0.1 格 */
     private static final double TACZ_MUZZLE_LIFT = 0.1;
     private static final int MARGIN = 4;
+    private static final ResourceLocation ICONS = ResourceLocation.fromNamespaceAndPath(
+            "minecraft", "textures/gui/icons.png");
 
     /** 本帧真实“投影 × 视图旋转”矩阵（AFTER_LEVEL 捕获，含视角晃动） */
     private static volatile Matrix4f mvp;
@@ -68,15 +71,17 @@ public final class ShoulderCrosshair {
         if (mc.player.isSpectator() || mc.player.isDeadOrDying()) return;
         if (!ViewManager.shoulderActive(c, mc)) return;
         if (ScopeFade.isActive()) return;
-        if (!GunDetect.isGun(mc.player.getMainHandItem(), c)) return;
 
-        // 弹道原点：TACZ 子弹在眼睛高度 +0.1 处生成（X/Z 与眼睛相同）
+        ItemStack hand = mc.player.getMainHandItem();
+        ItemStack using = mc.player.getUseItem();
+        boolean bow = isBow(using) || isBow(hand);
+        boolean gun = !bow && GunDetect.isGun(hand, c);
         Vec3 eye = mc.player.getEyePosition(partialTick);
-        Vec3 origin = GunDetect.usesTaczMuzzle(mc.player.getMainHandItem())
+        Vec3 origin = gun && GunDetect.usesTaczMuzzle(hand)
                 ? eye.add(0.0, TACZ_MUZZLE_LIFT, 0.0)
                 : eye;
         Vec3 dir = mc.player.getViewVector(partialTick);
-        RayHit ray = castRay(mc, origin, dir);
+        RayHit ray = gun || bow ? castRay(mc, origin, dir) : interactionHit(mc, eye, dir);
         Vec3 target = ray.point();
 
         Matrix4f m = mvp;
@@ -92,14 +97,47 @@ public final class ShoulderCrosshair {
         int cy = Math.max(MARGIN, Math.min(height - MARGIN - 1,
                 Math.round((0.5f - 0.5f * ndcY) * height)));
 
-        drawCross(graphics, cx, cy, 0xD8FFFFFF, 0x80FFFFFF);
+        if (gun) {
+            drawCross(graphics, cx, cy, 0xD8FFFFFF, 0x80FFFFFF);
+        } else {
+            drawVanillaCross(graphics, cx, cy);
+        }
 
         if (c.debugCrosshair) {
             drawDebug(mc, graphics, width, height, ndcX, ndcY, ray, origin, dir, target);
         }
     }
 
+    private static boolean isBow(ItemStack stack) {
+        return stack.getItem() instanceof BowItem || stack.getItem() instanceof CrossbowItem;
+    }
+
+    /** 普通物品沿用原版拾取结果和交互距离，不借用枪械射线。 */
+    private static RayHit interactionHit(Minecraft mc, Vec3 eye, Vec3 dir) {
+        HitResult hit = mc.hitResult;
+        if (hit != null && hit.getType() != HitResult.Type.MISS) {
+            return new RayHit(hit.getLocation(), hit.getType().name(), eye.distanceTo(hit.getLocation()));
+        }
+        double reach = mc.gameMode == null ? 4.5 : mc.gameMode.getPickRange();
+        return new RayHit(eye.add(dir.scale(reach)), "MISS", reach);
+    }
+
     // ---------------- 绘制 ----------------
+
+    /** 沿用原版纹理与反色混合，绘制结束恢复标准 HUD 混合。 */
+    private static void drawVanillaCross(GuiGraphics graphics, int cx, int cy) {
+        graphics.flush();
+        RenderSystem.enableBlend();
+        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ONE_MINUS_DST_COLOR,
+                GlStateManager.DestFactor.ONE_MINUS_SRC_COLOR,
+                GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        try {
+            graphics.blit(ICONS, cx - 7, cy - 7, 0, 0, 15, 15);
+            graphics.flush();
+        } finally {
+            RenderSystem.defaultBlendFunc();
+        }
+    }
 
     private static void drawCross(GuiGraphics g, int cx, int cy, int color, int centerColor) {
         int gap = 3;

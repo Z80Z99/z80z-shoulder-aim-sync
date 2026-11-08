@@ -13,7 +13,7 @@ Minecraft 1.20.1 · Forge 47.4.0 · Java 17 · 仅客户端
 - **三种跟随模式**：平滑插值（SMOOTH）、弹簧阻尼（SPRING）、固定跟随（FIXED，无延迟）。
 - **瞄准变焦 + 机身前探**：手持枪械瞄准时 FOV 渐进收窄、相机前移贴肩。
 - **狙击强制第一人称**：按 TACZ 枪包类型识别，开镜切第一人称，松手恢复，带镜片黑框过渡。
-- **越肩准星**：TACZ 只在第一人称绘制准星，本模组在越肩持枪时补一个，并按真实弹道命中点投影对齐。
+- **越肩准星**：空手、方块和工具显示原版十字，对齐原版交互目标；弓弩显示原版十字作为瞄准方向参考；枪械保留长距离射线投影准星。
 - **贴墙虚化**：镜头被墙挤近时，身体、盔甲、鞘翅一起变半透明，不再穿模。
 - **自动越肩**：上坐骑、鞘翅滑翔时自动切换，结束自动恢复。
 - **鞘翅滚转**：滑翔转弯时画面随倾斜滚转。
@@ -63,7 +63,7 @@ Minecraft 1.20.1 · Forge 47.4.0 · Java 17 · 仅客户端
 | `aim.aimHoldTicks` | 2 | 长按右键多少 tick 后算瞄准 |
 | `aim.deferToTaczScope` | true | 装倍镜时把变焦交给 TACZ |
 | `aim.followTaczAimProgress` | false | 跟随 TACZ 开镜动画而非自身计时 |
-| `aim.showShoulderCrosshair` | true | 越肩准星 |
+| `aim.showShoulderCrosshair` | true | 越肩准星（枪械、弓弩、空手及普通物品）；弓弩仅为方向参考 |
 | `aim.debugCrosshair` | false | 准星调试显示 |
 | `sniper.forceFirstPersonSniper` | true | 狙击开镜强制第一人称 |
 | `sniper.scopeFade` / `scopeFadeTime` | true / 0.2 | 镜片黑框过渡 |
@@ -86,6 +86,8 @@ Minecraft 1.20.1 · Forge 47.4.0 · Java 17 · 仅客户端
 - 越肩相机横向偏移，而 TACZ 弹道从眼睛发出，因此准星画在弹道命中点的投影位置、不在屏幕中心——这是几何正确行为。
 - 腰射散布（TACZ 的 `inaccuracy`）会让弹着点围绕准星随机分布，属枪械属性。
 - 开火后坐力会短暂踢动视角，此时画面朝向与弹道方向不完全一致。
+- 原版弓弩准星表示瞄准方向，不是精确箭落点预测；拉弓蓄力、箭的初速度、重力、阻力、散布和玩家运动都会影响落点，弩的多重射击和烟花弹也不由直线准星预测。
+- 第一人称仍由原版/TACZ 绘制准星，普通第三人称前后视角不额外绘制；此开关仅覆盖本模组的越肩视角。
 
 ## 安装
 
@@ -131,7 +133,7 @@ A client-side mod for Minecraft 1.20.1 (Forge 47.4.0, Java 17) that replaces van
 - **Three follow modes**: smoothed interpolation (SMOOTH), spring-damper (SPRING), fixed (FIXED, zero latency)
 - **Aim zoom + body push**: holding a gun in aim narrows the FOV and pushes the camera toward the shoulder
 - **Forced first person for snipers**: detected via TACZ gun-pack types; scoping switches to first person, releasing returns, with a lens-black transition
-- **Over-shoulder crosshair**: TACZ only draws its crosshair in first person — this mod adds one while aiming from the shoulder, projected onto the real ballistic hit point
+- **Over-shoulder crosshair**: vanilla-style crosshairs for empty hands, blocks and tools follow vanilla interaction targets; bows and crossbows get an aim-direction reference, while guns retain their long-range ray-projected crosshair
 - **Wall fade**: when the camera is squeezed by walls, the body, armor and elytra fade to translucent instead of clipping
 - **Auto over-shoulder** when mounting or gliding; reverts automatically
 - **Elytra roll**: the screen rolls with your turn while gliding
@@ -159,6 +161,8 @@ Client config: `config/z80z_shoulder_aim_sync-client.toml`, or press `K` in game
 
 - The over-shoulder camera is offset while TACZ bullets originate at the eyes, so the crosshair sits at the projection of the ballistic hit point rather than screen center — geometrically correct by design
 - Hip-fire inaccuracy spreads hits around the crosshair (a weapon property), and recoil briefly kicks the view
+- Bow and crossbow crosshairs indicate aim direction, not exact arrow impact: draw power, initial velocity, gravity, drag, spread and player motion affect the trajectory. Multishot and firework impacts are not predicted by this straight-line reference.
+- First-person crosshairs remain with vanilla/TACZ. This overlay only draws in this mod's shoulder view, not normal front/back third person; `aim.showShoulderCrosshair` controls all supported item categories.
 
 ### Install
 

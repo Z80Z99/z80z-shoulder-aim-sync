@@ -138,7 +138,7 @@ public final class OSConfig {
         ZOOM_FP = b.comment("第一人称下也变焦。注意：与 TACZ 的瞄具倍率叠加会导致实际倍率偏大；装了 TACZ-addon 且开着“瞄准切换第一人称”时建议保持关闭").define("zoomInFirstPerson", DEF_ZOOM_FP);
         AIM_DELAY = b.comment("长按右键多少 tick 后才算进入瞄准（防连点闪烁），0=立即").defineInRange("aimHoldTicks", DEF_AIM_DELAY, 0, 20);
         DEFER_TACZ = b.comment("装了倍镜（瞄具倍率>1）时把变焦交给 TACZ，避免两层 FOV 相乘；铁瞄仍使用本模组的轻微变焦").define("deferToTaczScope", DEF_DEFER_TACZ);
-        CROSSHAIR = b.comment("越肩持枪时绘制准星（TACZ 只在第一人称绘制准星）").define("showShoulderCrosshair", DEF_CROSSHAIR);
+        CROSSHAIR = b.comment("越肩准星：覆盖枪械、弓弩、空手和普通物品；弓弩仅显示瞄准方向参考，不预测重力与散布落点").define("showShoulderCrosshair", DEF_CROSSHAIR);
         DEBUG_CROSSHAIR = b.comment("调试：额外绘制屏幕中心红叉与投影数值，用于排查准星与弹着点偏差").define("debugCrosshair", DEF_DEBUG_CROSSHAIR);
         FOLLOW_TACZ = b.comment("瞄准进度跟随 TACZ 的开镜动画（用枪包自带的开镜时间）。关闭时使用上方“变焦/前探时间”，效果可自行调节").define("followTaczAimProgress", DEF_FOLLOW_TACZ);
 
