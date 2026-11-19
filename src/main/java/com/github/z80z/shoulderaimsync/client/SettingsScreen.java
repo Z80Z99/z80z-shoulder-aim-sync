@@ -6,8 +6,10 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -76,6 +78,7 @@ public class SettingsScreen extends Screen {
     }
 
     private void buildRows() {
+        // 面板一：越肩与跟随（含骑乘/鞘翅自动切换，二者同属视角行为）
         followRows.add(toggleRow("enableMod", OSConfig.ENABLED));
         followRows.add(toggleRow("takeover", OSConfig.TAKEOVER));
         followRows.add(toggleRow("autoShoulder", OSConfig.AUTO_SHOULDER));
@@ -97,7 +100,15 @@ public class SettingsScreen extends Screen {
         followRows.add(toggleRow("avoidWall", OSConfig.AVOID_WALL));
         followRows.add(toggleRow("fadePlayer", OSConfig.FADE_PLAYER));
         followRows.add(toggleRow("autoRiding", OSConfig.AUTO_RIDING));
+        followRows.add(listBoxRow("ridingBlocklist", OSConfig.RIDING_BLOCKLIST));
+        followRows.add(toggleRow("autoElytra", OSConfig.AUTO_ELYTRA));
+        followRows.add(sliderIntRow("elytraDelay", 1, 200, OSConfig.ELYTRA_DELAY,
+                v -> Component.translatable(U + "ticks", fmtInt(v)).getString()));
+        followRows.add(toggleRow("elytraRoll", OSConfig.ELYTRA_ROLL));
+        followRows.add(sliderIntRow("elytraRollStrength", 0, 100, OSConfig.ELYTRA_ROLL_STRENGTH,
+                v -> Component.translatable(U + "degrees", fmtInt(v)).getString()));
 
+        // 面板二：瞄准与准星
         aimRows.add(toggleRow("zoom", OSConfig.ZOOM));
         // 拉近强度 = 1 - zoomFactor：滑块越大变焦越强，避免“1.0=不变焦”的反直觉陷阱
         aimRows.add(new Row(ROW, (x, y, w) -> slider(x, y, w, "zoomStrength", 0.0, 0.65,
@@ -112,22 +123,16 @@ public class SettingsScreen extends Screen {
         aimRows.add(sliderIntRow("aimDelay", 0, 20, OSConfig.AIM_DELAY,
                 v -> Component.translatable(U + "ticks", fmtInt(v)).getString()));
         aimRows.add(toggleRow("deferTacz", OSConfig.DEFER_TACZ));
+        aimRows.add(toggleRow("crosshair", OSConfig.CROSSHAIR));
+        aimRows.add(toggleRow("debugCrosshair", OSConfig.DEBUG_CROSSHAIR));
 
+        // 面板三：狙击与兼容
         sniperRows.add(toggleRow("forceFpSniper", OSConfig.FORCE_FP_SNIPER));
         sniperRows.add(toggleRow("scopeFade", OSConfig.SCOPE_FADE));
         sniperRows.add(sliderRow("fadeTime", 0.05, 1.0, OSConfig.FADE_TIME, SettingsScreen::fmtSec));
-        aimRows.add(toggleRow("crosshair", OSConfig.CROSSHAIR));
-        aimRows.add(toggleRow("debugCrosshair", OSConfig.DEBUG_CROSSHAIR));
-        aimRows.add(toggleRow("autoElytra", OSConfig.AUTO_ELYTRA));
-        aimRows.add(sliderIntRow("elytraDelay", 1, 200, OSConfig.ELYTRA_DELAY,
-                v -> Component.translatable(U + "ticks", fmtInt(v)).getString()));
-        aimRows.add(toggleRow("elytraRoll", OSConfig.ELYTRA_ROLL));
-        aimRows.add(sliderIntRow("elytraRollStrength", 0, 100, OSConfig.ELYTRA_ROLL_STRENGTH,
-                v -> fmtInt(v) + "°"));
         sniperRows.add(listBoxRow("sniperIds", OSConfig.SNIPER_IDS));
         sniperRows.add(listBoxRow("sniperKeywords", OSConfig.SNIPER_KEYWORDS));
         sniperRows.add(listBoxRow("gunMods", OSConfig.GUN_MODS));
-        sniperRows.add(listBoxRow("ridingBlocklist", OSConfig.RIDING_BLOCKLIST));
     }
 
     private Row toggleRow(String key, ForgeConfigSpec.BooleanValue val) {
@@ -195,13 +200,17 @@ public class SettingsScreen extends Screen {
         int bw = Math.min(panelW, 110);
         int leftX = wide ? panelX0 : (this.width - panelW) / 2;
         int rightX = wide ? panelX2 + panelW - bw : leftX + panelW - bw;
-        addRenderableWidget(Button.builder(Component.translatable(P + "saveClose"), b -> {
+        Button save = Button.builder(Component.translatable(P + "saveClose"), b -> {
             commitLists();
             OSConfig.saveNow();
             onClose();
-        }).bounds(leftX, by, bw, 16).build());
-        addRenderableWidget(Button.builder(Component.translatable(P + "reset"), b -> resetDefaults())
-                .bounds(rightX, by, bw, 16).build());
+        }).bounds(leftX, by, bw, 16).build();
+        attachTip(save, P + "saveClose.tip");
+        addRenderableWidget(save);
+        Button reset = Button.builder(Component.translatable(P + "reset"), b -> resetDefaults())
+                .bounds(rightX, by, bw, 16).build();
+        attachTip(reset, P + "reset.tip");
+        addRenderableWidget(reset);
     }
 
     private int followRowsHeight() {
@@ -293,9 +302,7 @@ public class SettingsScreen extends Screen {
             OSConfig.saveNow();
             sync.run();
         }).bounds(x, y, w, WIDGET_H).build();
-        if (val == OSConfig.CROSSHAIR) {
-            b.setTooltip(Tooltip.create(Component.translatable(O + "crosshair.tip")));
-        }
+        attachTip(b, O + key + ".tip");
         holder[0] = b;
         sync.run();
         addRenderableWidget(b);
@@ -323,6 +330,7 @@ public class SettingsScreen extends Screen {
             OSConfig.saveNow();
             sync.run();
         }).bounds(x, y, w, WIDGET_H).build();
+        attachTip(b, O + key + ".tip");
         holder[0] = b;
         sync.run();
         addRenderableWidget(b);
@@ -346,6 +354,7 @@ public class SettingsScreen extends Screen {
     private int slider(int x, int y, int w, String key, double min, double max,
                        Supplier<Double> getter, Consumer<Double> setter, Function<Double, String> fmt) {
         Slide s = new Slide(x, y, w, key, min, max, getter, setter, fmt);
+        attachTip(s, O + key + ".tip");
         addRenderableWidget(s);
         syncers.add(s::syncNow);
         return y + ROW;
@@ -353,7 +362,9 @@ public class SettingsScreen extends Screen {
 
     private int listBox(int x, int y, int w, String key,
                         ForgeConfigSpec.ConfigValue<List<? extends String>> val) {
-        addRenderableWidget(new StringWidget(x, y, w, 10, label(key), this.font).alignLeft());
+        StringWidget listLabel = new StringWidget(x, y, w, 10, label(key), this.font).alignLeft();
+        attachTip(listLabel, O + key + ".tip");
+        addRenderableWidget(listLabel);
         EditBox box = new EditBox(this.font, x, y + LABEL_H, w, 14, label(key));
         box.setMaxLength(1000);
         box.setValue(join(val.get()));
@@ -376,6 +387,13 @@ public class SettingsScreen extends Screen {
 
     private static Component label(String key) {
         return Component.translatable(O + key);
+    }
+
+    /** 语言文件里存在该提示键时挂上 tooltip；不存在则静默跳过（声明式，无需特判）。 */
+    private static void attachTip(AbstractWidget widget, String tipKey) {
+        if (I18n.exists(tipKey)) {
+            widget.setTooltip(Tooltip.create(Component.translatable(tipKey)));
+        }
     }
 
     private static List<String> parse(String src) {
@@ -468,8 +486,14 @@ public class SettingsScreen extends Screen {
             graphics.drawString(this.font, title, (this.width - this.font.width(title)) / 2, 6, 0xFFF0A0, false);
         }
 
-        graphics.drawCenteredString(this.font, Component.translatable(P + "hint.keys"),
-                this.width / 2, this.height - 13, 0xB0B0B0);
+        // 底部键位提示用实际绑定键动态生成，玩家改键后自动跟随
+        if (this.minecraft != null && this.minecraft.options != null) {
+            graphics.drawCenteredString(this.font, Component.translatable(P + "hint.keys",
+                            this.minecraft.options.keyTogglePerspective.getTranslatedKeyMessage(),
+                            KeyBindings.TOGGLE_SHOULDER.getTranslatedKeyMessage(),
+                            KeyBindings.SETTINGS.getTranslatedKeyMessage()),
+                    this.width / 2, this.height - 13, 0xB0B0B0);
+        }
         if (addonLoaded()) {
             graphics.drawString(this.font, Component.translatable(P + "hint.addon"),
                     4, this.height - 42, 0xFF8080, false);
